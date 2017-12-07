@@ -1,0 +1,31 @@
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1px;
+}
+
+body {
+  font: 12px Arial;
+  background: rgb(48,50,60);
+}
+
+.legend {
+    font-size: 16px;
+    font-weight: bold;
+    text-anchor: left;
+}
+.axis line{
+  stroke: rgba(255,255,255,0.5);
+}
+.axis path{
+  stroke: rgba(255,255,255,0.5);
+}
+.axis text{
+  fill:rgba(255,255,255,0.6);
+}
+div.main-container{
+  margin: 0 5%;
+}
+input{
+  color:white;
+}

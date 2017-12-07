@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/moment.min.js"></script>
+  <!-- <script type="text/javascript" src="js/js.js"></script> -->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <link rel="stylesheet" href="style/style.css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+  <style media="screen">
+    body{
+      font-family: 'Open Sans', sans-serif;
+    }
+    p {
+      color: white;
+      font-size: 14px;
+    }
+    h2{
+      color:white;
+      font-size: 20px;
+      margin: 40px 0 20px 0;
+    }
+    input.region-input {
+      margin-right: 10px;
+    }
+    .styled-select {
+   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
+   height: 29px;
+   overflow: hidden;
+   width: 240px;
+}
+
+.styled-select select {
+   background: transparent;
+   border: none;
+   font-size: 14px;
+   height: 29px;
+   padding: 5px; /* If you add too much padding here, the options won't show in IE */
+   width: 268px;
+}
+    .semi-square {
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+    .blue    { background-color: #3b8ec2; }
+    .blue select    { color: #fff; }
+  </style>
+</head>
+
+<body>
+  <div class="main-container">
+    <div class="row">
+      <div class="col-md-9" id="line-chart">
+      </div>
+      <div class="col-md-3">
+        <h2>Select a year</h2>
+        <div class="semi-square styled-select blue">
+          <select id="year">
+            <option value="2014">2014</option>
+            <option value="2013">2013</option>
+            <option value="2012">2012</option>
+            <option value="2011">2011</option>
+            <option value="2010">2010</option>
+            <option value="2009">2009</option>
+            <option value="2008">2008</option>
+            <option value="2007">2007</option>
+            <option value="2006">2006</option>
+            <option value="2005">2005</option>
+          </select>
+        </div>
+        <br><br>
+        <div class="">
+          <h2>Select Regions</h2>
+          <p style="color:rgb(128,216,255);"><input class="region-input" type="checkbox" id="north" name="1" checked/>North China</p>
+          <p style="color:rgb(140,158,255);"><input class="region-input" type="checkbox" id="northeast" name="2"/>Northeast China</p>
+          <p style="color:rgb(255,138,128);"><input class="region-input" type="checkbox" id="east" name="3"/>East China</p>
+          <p style="color:rgb(234,128,252);"><input class="region-input" type="checkbox" id="southcentral" name="4"/>South Central China</p>
+          <p style="color:rgb(255,209,128);"><input class="region-input" type="checkbox" id="southwest" name="5" checked/>Southwest China</p>
+          <p style="color:rgb(102,187,106);"><input class="region-input" type="checkbox" id="northwest" name="6"/>Northwest China</p>
+        </div>
+      </div>
+    </div>
+
+
+    <script>
+      // set the dimensions and margins of the graph
+      var year = d3.select("#year").node().value;
+      var margin = {
+          top: 20,
+          right: 50,
+          bottom: 30,
+          left: 50
+        },
+        parent = d3.select('#line-chart'),
+        width = parseInt(parent.style("width"),10) - margin.left - margin.right,
+        height = 470 - margin.top - margin.bottom;
+
+      // parse the date / time
+      var parseTime = d3.timeParse("%Y-%m");
+
+      // get all the checked regions
+      var regions = $('.region-input');
+      // set the ranges
+      x = d3.scaleTime().range([0, width]);
+      y = d3.scaleLinear().range([height, 0]);
+      // define the line
+      var valueline = d3.line()
+        .curve(d3.curveCatmullRomOpen)
+        .x(function(d) {
+          return x(d[0]);
+        })
+        .y(function(d) {
+          return y(d[1]);
+        });
+
+      // append the svg obgect to the body of the page
+      var svg = d3.select("#line-chart").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      // add color encoding for different cities
+      var c1 = "rgb(128,216,255)",
+        c2 = "rgb(140,158,255)",
+        c3 = "rgb(255,138,128)",
+        c4 = "rgb(234,128,252)",
+        c5 = "rgb(255,209,128)",
+        c6 = "rgb(102,187,106)";
+      // var c_north = c1, c_south = "#FE7F2D";
+      // var color = {
+      //   "11": c_north,"12": c_north,"13": c_north,"14": c_north,"15": c_north,
+      //   "21": c_north,"22": c_north,"23": c_north,
+      //   "31": c_south,"32": c_south,"33": c_south,"34": c_south,"35": c_south,"36": c_south,"37": c_north,
+      //   "41": c_north,"42": c_south,"43": c_south,"44": c_south,"45": c_south,"46": c_south,
+      //   "50": c_south,"51": c_south,"52": c_south,"53": c_south,"54": c_south,
+      //   "61": c_north,"62": c_north,"63": c_north,"64": c_north,"65": c_north
+      // };
+      var color = {
+        "11": c1,
+        "12": c1,
+        "13": c1,
+        "14": c1,
+        "15": c1,
+        "21": c2,
+        "22": c2,
+        "23": c2,
+        "31": c3,
+        "32": c3,
+        "33": c3,
+        "34": c3,
+        "35": c3,
+        "36": c3,
+        "37": c3,
+        "41": c4,
+        "42": c4,
+        "43": c4,
+        "44": c4,
+        "45": c4,
+        "46": c4,
+        "50": c5,
+        "51": c5,
+        "52": c5,
+        "53": c5,
+        "54": c5,
+        "61": c6,
+        "62": c6,
+        "63": c6,
+        "64": c6,
+        "65": c6
+      };
+
+      // draw function
+      function draw_line_chart(data) {
+        console.log(parseInt(parent.style("width"),10))
+        svg.attr('width',parseInt(parent.style("width"),10) - margin.left - margin.right);
+        var data = data;
+        // parse the data
+        var all_data = [];
+        for (var key of Object.keys(data)) {
+          for (var item of data[key]) {
+            // console.log(item);
+            all_data.push(item);
+          }
+        }
+        // adding data smoothing
+        all_data.push([year+"-02", 30]);
+        all_data.push([year+"-02", 350]);
+
+        // Scale the range of the data for all the lines
+        x.domain(d3.extent(all_data, function(d) {
+          return parseTime(d[0]);
+        }));
+        y.domain(d3.extent(all_data, function(d) {
+          return d[1];
+        }));
+        // Add the X Axis
+        svg.append("g")
+          .attr("class", "axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(d3.axisBottom(x));
+        // Add the Y Axis
+        svg.append("g")
+          .attr("class", "axis")
+          .call(d3.axisLeft(y));
+        // function to draw one city
+        function draw_one(data, division) {
+          var sub_data = data[division]
+          // Add the paths with different curves.
+          svg.append("path")
+            .datum(sub_data)
+            .attr("class", "line")
+            .style("stroke", function() { // Add the colours dynamically
+              return color[division.substring(0, 2)];
+            })
+            .style("opacity", 0.4)
+            .attr("d", d3.line()
+              .curve(d3.curveCatmullRom)
+              .x(function(d) {
+                // console.log(x(parseTime(d[0])))
+                return x(parseTime(d[0]));
+              })
+              .y(function(d) {
+                // console.log(y(d[1]))
+                return y(d[1]);
+              })
+            );
+            // end of draw_one function
+        }
+        // get selected regions
+        var selected_regions = []
+        for (var region of regions){
+          if (region.checked){
+            selected_regions.push(region.name)
+          }
+        }
+        // draw the lines here
+        for (var key of Object.keys(data)) {
+          if (data[key].length == 12 && selected_regions.indexOf(key.substring(0,1)) != -1) {
+            draw_one(data, key);
+          }
+        }
+        // end of draw_line_chart function
+      }
+      // Get the data
+      function load_and_draw(){
+        year = d3.select("#year").node().value;
+        d3.json("all_city_aqi_" + year + ".json", function(error, data) {
+          if (error) throw error;
+          // format the data
+          svg.selectAll("*").remove();
+          draw_line_chart(data)
+        });
+      }
+      load_and_draw(year);
+      // dropdown worked
+      d3.select("#year").on('change',function(){
+        load_and_draw(year);
+      });
+      // checkbox worked
+      regions.each(function(d){
+          d3.select(this)
+          .on('change',function(){
+          load_and_draw(year);
+        });
+      });
+      // resize window worked
+      d3.select(window).on('resize', function(){
+        console.log('resized');
+        // console.log(svg.style('width'));
+        load_and_draw(year);
+      });
+
+
+
+      // svg.append("text")
+      //   .attr("x", width + 5) // space legend
+      //   .attr("y", margin.top + 20 + (1 * 20))
+      //   .attr("class", "legend") // style the legend
+      //   .style("fill", function() { // Add the colours dynamically
+      //     return color("curveCatmullRom");
+      //   })
+      //   .text("curveCatmullRom");
+      // .on("click", function(){
+      // // Determine if current line is visible
+      // var active   = daCurve.active ? false : true,
+      // newOpacity = active ? 0 : 1;
+      // // Hide or show the elements based on the ID
+      // d3.select("#tag"+i)
+      //     .transition().duration(100)
+      //     .style("opacity", newOpacity);
+      // // Update whether or not the elements are active
+      // daCurve.active = active;
+      // })
+    </script>
+    <!-- code for the slider -->
+    <!-- <div class="container">
+      <div class="row" style="margin:-70px 0 0 50px;">
+        <p class="col-md-5 caption" style="margin-bottom:20px;">
+          Slider to control the start date and end date
+        </p>
+        <div class="col-md-10">
+          <div id="slider-range"></div>
+        </div>
+      </div>
+      <div class="row slider-labels" style="margin:20px 0 0 50px;">
+        <div class="col-md-5 caption">
+          <strong>Start Date:</strong> <span id="slider-range-value1"></span>
+        </div>
+        <div class="col-md-5 text-right caption">
+          <strong>End Date:</strong> <span id="slider-range-value2"></span>
+        </div>
+      </div>
+    </div> -->
+  </div>
+
+</body>
