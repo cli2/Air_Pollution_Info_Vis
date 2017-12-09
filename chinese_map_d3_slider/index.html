@@ -7,9 +7,6 @@
   	<link rel="stylesheet" href="style/d3.slider.css">  
 </head>
 <body>
-	<audio loop autoplay>
-		<source src="sound_effect/lzmtbsb.mp3" type="audio/mpeg">
-	</audio>
 	
 	<!-- map and scatter -->
 	<div id="china-map"></div>
@@ -42,8 +39,8 @@
 
 
         queue()
-            .defer(d3.json, "https://gist.githubusercontent.com/zhulinpinyu/8e18d57b3b18fb74e776/raw/efbb74cfea53decb1fe7d6bf279fd351c28c4810/china_simplify.json")
-            .defer(d3.json, "data/aqi_data.json")
+            .defer(d3.json, "data/map_data.json")
+            .defer(d3.json, "data/aqi_data_year.json")
             .await(ready);  
 
 
@@ -53,15 +50,14 @@
             let all_city = citydata
             let filter_city = citydata
 
-            // color scale
-			var aqi_min = Math.min(...citydata.map( a => a.value[2])) + 11;
-			var aqi_max = Math.max(...citydata.map( a => a.value[2])) - 63;
+			var aqi_min = Math.min(...citydata.map( a => a.value[2])) + 50;
+			var aqi_max = Math.max(...citydata.map( a => a.value[2])) - 69;
 			var aqi_quarter1 = aqi_min + (aqi_max - aqi_min) / 3;
 			var aqi_quarter2 = aqi_max - (aqi_max - aqi_min) / 3;
 
     		var dotColorScale = d3.scale.linear()
         		.domain([aqi_min, aqi_quarter1, aqi_quarter2, aqi_max])
-        		.range(['#2980b9', '#f1c40f', '#e67e22','#e74c3c']);
+        		.range(['#2196F3', '#FFC107', '#FF5722','#F44336']);
 
         	// map tooltip
 	        var tooltip_map = d3.select("body")
@@ -82,16 +78,11 @@
 	        aqiScatter(all_city, dotColorScale, tooltip_aqi);
 
 	        // slider for scatter	    
-		    d3.select('#slider').call(d3.slider().value([0, 400]).axis(true).min(0).max(400).on("slide", function(evt, value) {
-
+		    d3.select('#slider').call(d3.slider().value([0, 300]).axis(true).min(0).max(300).on("slide", function(evt, value) {
 		        filter_city = citydata.filter(a => a.value[2] > value[0] && a.value[2] < value[1]);
-
 		        svg.selectAll("circle").remove();
-
 		        aqiScatter(filter_city, dotColorScale, tooltip_aqi);
-		        
 		    }));	    
-
 
         }
 
@@ -114,6 +105,7 @@
 	                    .style("opacity", .9);
 
 	                tooltip_map.html(d.properties.name)
+	                	.style("color", "#bbb")
 	                    .style("left", (d3.event.pageX) + "px")
 	                    .style("top", (d3.event.pageY - 28) + "px");
 	            })
@@ -133,11 +125,11 @@
                 .attr("class","map")
                 .attr("cx",function(d) {return projection([d.value[0],d.value[1]])[0]})
                 .attr("cy",function(d) {return projection([d.value[0],d.value[1]])[1]})
-                .attr("r", 6)  
+                .attr("r", 4.5)  
                 .style("fill", function(d) {return dotColorScale(d.value[2])})
                 .style("opacity",.8)
                 .on("mouseover", function(d) {   
-	                d3.select(this).attr("r", 13);
+	                d3.select(this).attr("r", 14);
 	                d3.select(this).attr("opacity", 1);
 	                tooltip_aqi.transition()
 	                    .duration(200)
@@ -148,7 +140,7 @@
 	                    .style("top", (d3.event.pageY - 28) + "px");
                     })                  
                 .on("mouseout", function(d) {       
-	                d3.select(this).attr("r", 6);
+	                d3.select(this).attr("r", 4.5);
 	                d3.select(this).attr("opacity", .8);
 	                tooltip_aqi.transition()
 	                    .duration(500)
