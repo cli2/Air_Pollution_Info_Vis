@@ -5,19 +5,34 @@
   	<title>Chinese map Demo</title>
   	<link rel="stylesheet" href="style/style.css">
   	<link rel="stylesheet" href="style/d3.slider.css">  
+  	<style>
+		body {
+		  margin: 0;
+		  font-size: 14px;
+		  font-family: "Helvetica Neue", Helvetica;
+		}
+		#chart {
+		  position: absolute;
+		  top: 50px;
+		  left: 1000px;
+		}	
+	</style>
 </head>
 <body>
 	
 	<!-- map and scatter -->
 	<div id="china-map"></div>
-
+	<div id="body">
+	<div id="chart"></div></div>
 	<!-- slider for map -->
 	<div id="slider" class="slider"></div>
 	<span id="slider3textmin"></span>, <span id="slider3textmax"></span>
 
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 	<script src="http://d3js.org/queue.v1.min.js"></script>
+	<script src="js/RadarChart.js"></script>
 	<script src="js/d3.slider.js"></script>
+	<script src="js/script.js"></script>
 	<!-- <script src="map.js"></script> -->
 	<script>
 	    var width = 1300;
@@ -40,7 +55,7 @@
 
         queue()
             .defer(d3.json, "data/map_data.json")
-            .defer(d3.json, "data/aqi_data_year.json")
+            .defer(d3.json, "data/new_weather_social.json")
             .await(ready);  
 
 
@@ -49,7 +64,6 @@
 
             let all_city = citydata
             let filter_city = citydata
-
 			var aqi_min = Math.min(...citydata.map( a => a.value[2])) + 50;
 			var aqi_max = Math.max(...citydata.map( a => a.value[2])) - 69;
 			var aqi_quarter1 = aqi_min + (aqi_max - aqi_min) / 3;
@@ -149,14 +163,30 @@
 
                 // tian ma 
                 .on("click", function(d){
-
+                	console.log(d)
+                	if (LegendOptions.length>= 3) {
+                		LegendOptions = []
+                		social = []
+                	}
+                	LegendOptions.push(d['name']);
+                	//console.log(d['social'])
+                	social.push(
+                		[
+							{axis:"Area of Green Land",value:d['social']['Area_of_Green_Land']},
+							{axis:"Green Covered Area %",value:d['social']['Green_Covered_Area_as_%_of_Completed_Area']},
+							{axis:"Administrative region Area - under city",value:d['social']['Administrative_region_Area_of_Built_Districts-under_city']},
+							{axis:"Population Density - Total City",value:d['social']['Population_Density - Total_City']},
+							{axis:"GDP",value:d['social']['2014_gdp']},
+							{axis:"Housing Price",value:0.6104310256},
+							{axis:"Population", value:0.3893473866},
+							{axis:"Number of Taxis", value:1.0}
+		  				])
+                	RadarChart.draw("#chart", social, mycfg);
                 });
         }
 
 
 	</script>
-
-
 
 
 </body>
