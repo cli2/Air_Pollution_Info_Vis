@@ -32,9 +32,90 @@
 	<script src="http://d3js.org/queue.v1.min.js"></script>
 	<script src="js/RadarChart.js"></script>
 	<script src="js/d3.slider.js"></script>
-	<script src="js/script.js"></script>
 	<!-- <script src="map.js"></script> -->
 	<script>
+		var w = 500, 
+		h = 500;
+
+		var colorscale = d3.scale.category10();
+
+		//Legend titles
+		var LegendOptions = ['Beijing'];
+
+		//Data
+		var social = [
+				  [
+					{axis:"GDP",value:0.9016855545631348},
+					{axis:"GDP per capita", value:0.3017333866481376},
+					{axis:"Green Covered Area %",value:0.6552526166},
+					{axis:"Secondary Industry %",value:0.2232},
+					{axis:"Population Density",value:0.30184264398717114},
+					{axis:"Population",value:0.3857065576726573}
+				  ]
+				];
+
+		//Options for the Radar chart, other than default
+		var mycfg = {
+		  w: w,
+		  h: h,
+		  maxValue: 0.6,
+		  levels: 6,
+		  ExtraWidthX: 300
+		}
+
+		//Call function to draw the Radar chart
+		//Will expect that data is in %'s
+		RadarChart.draw("#chart", social, mycfg);
+
+		////////////////////////////////////////////
+		/////////// Initiate legend ////////////////
+		////////////////////////////////////////////
+
+		var svg1 = d3.select('#body')
+			.selectAll('svg')
+			.append('svg')
+			.attr("width", w+300)
+			.attr("height", h)
+		//Create the title for the legend
+		var text = svg1.append("text")
+			.attr("class", "title")
+			.attr('transform', 'translate(90,0)') 
+			.attr("x", w - 70)
+			.attr("y", 10)
+			.attr("font-size", "12px")
+			.attr("fill", "#404040")
+			.text("Cities");
+				
+		//Initiate Legend	
+		var legend = svg1.append("g")
+			.attr("class", "legend")
+			.attr("height", 100)
+			.attr("width", 200)
+			.attr('transform', 'translate(90,20)') 
+			;
+			//Create colour squares
+			legend.selectAll('rect')
+			  .data(LegendOptions)
+			  .enter()
+			  .append("rect")
+			  .attr("x", w - 65)
+			  .attr("y", function(d, i){ return i * 20;})
+			  .attr("width", 10)
+			  .attr("height", 10)
+			  .style("fill", function(d, i){ return colorscale(i);})
+			  ;
+			//Create text next to squares
+			legend.selectAll('text')
+			  .data(LegendOptions)
+			  .enter()
+			  .append("text")
+			  .attr("x", w - 52)
+			  .attr("y", function(d, i){ return i * 20 + 9;})
+			  .attr("font-size", "11px")
+			  .attr("fill", "#737373")
+			  .text(function(d) { return d; })
+			  ;
+		console.log(svg1);
 	    var width = 1300;
 	    var height = 850;
 
@@ -55,7 +136,7 @@
 
         queue()
             .defer(d3.json, "data/map_data.json")
-            .defer(d3.json, "data/new_weather_social.json")
+            .defer(d3.json, "data/all.json")
             .await(ready);  
 
 
@@ -164,24 +245,62 @@
                 // tian ma 
                 .on("click", function(d){
                 	console.log(d)
-                	if (LegendOptions.length>= 3) {
-                		LegendOptions = []
-                		social = []
+                	if (LegendOptions.length >= 3) {
+                		LegendOptions = [];
+                		social = [];
                 	}
                 	LegendOptions.push(d['name']);
-                	//console.log(d['social'])
                 	social.push(
                 		[
-							{axis:"Area of Green Land",value:d['social']['Area_of_Green_Land']},
-							{axis:"Green Covered Area %",value:d['social']['Green_Covered_Area_as_%_of_Completed_Area']},
-							{axis:"Administrative region Area - under city",value:d['social']['Administrative_region_Area_of_Built_Districts-under_city']},
-							{axis:"Population Density - Total City",value:d['social']['Population_Density - Total_City']},
-							{axis:"GDP",value:d['social']['2014_gdp']},
-							{axis:"Housing Price",value:0.6104310256},
-							{axis:"Population", value:0.3893473866},
-							{axis:"Number of Taxis", value:1.0}
+							{axis:"GDP",value:d['social']['GDP']},
+							{axis:"GDP per capita", value:d['social']['GDP_per_capita']},
+							{axis:"Green Covered Area %",value:d['social']['Green_Covered_Area_percentage']},
+							{axis:"Secondary Industry %",value:d['social']['secondary_industry_percentage']},
+							{axis:"Population Density",value:d['social']['Population_Density']},
+							{axis:"Population",value:d['social']['population']}
 		  				])
                 	RadarChart.draw("#chart", social, mycfg);
+                		svg1 = d3.select('#body')
+							.selectAll('svg')
+							.append('svg')
+							.attr("width", w + 300)
+							.attr("height", h)
+						text = svg1.append("text")
+							.attr("class", "title")
+							.attr('transform', 'translate(90,0)') 
+							.attr("x", w - 70)
+							.attr("y", 10)
+							.attr("font-size", "12px")
+							.attr("fill", "#404040")
+							.text("Cities");
+						legend = svg1.append("g")
+						.attr("class", "legend")
+						.attr("height", 100)
+						.attr("width", 200)
+						.attr('transform', 'translate(90,20)') 
+						;
+						//Create colour squares
+						legend.selectAll('rect')
+						  .data(LegendOptions)
+						  .enter()
+						  .append("rect")
+						  .attr("x", w - 65)
+						  .attr("y", function(d, i){ return i * 20;})
+						  .attr("width", 10)
+						  .attr("height", 10)
+						  .style("fill", function(d, i){ return colorscale(i);})
+						  ;
+						//Create text next to squares
+						legend.selectAll('text')
+						  .data(LegendOptions)
+						  .enter()
+						  .append("text")
+						  .attr("x", w - 52)
+						  .attr("y", function(d, i){ return i * 20 + 9;})
+						  .attr("font-size", "11px")
+						  .attr("fill", "#737373")
+						  .text(function(d) { return d; })
+						  ;
                 });
         }
 
