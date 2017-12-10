@@ -5,27 +5,78 @@
 }
 
 body {
-  font: 12px Arial;
-  background: rgb(48,50,60);
+  font-family: 'Open Sans', sans-serif;
+  background: rgb(48, 50, 60);
 }
 
 .legend {
-    font-size: 16px;
-    font-weight: bold;
-    text-anchor: left;
+  font-size: 16px;
+  font-weight: bold;
+  text-anchor: left;
 }
-.axis line{
-  stroke: rgba(255,255,255,0.5);
+
+.axis line {
+  stroke: rgba(255, 255, 255, 0.5);
 }
-.axis path{
-  stroke: rgba(255,255,255,0.5);
+
+.axis path {
+  stroke: rgba(255, 255, 255, 0.5);
 }
-.axis text{
-  fill:rgba(255,255,255,0.6);
+
+.axis text {
+  fill: rgba(255, 255, 255, 0.6);
 }
-div.main-container{
+
+div.main-container {
   margin: 0 5%;
 }
-input{
-  color:white;
+
+input.region-input {
+  margin-right: 10px;
+}
+
+p {
+  color: white;
+  font-size: 14px;
+}
+
+.label {
+  color: white;
+  font-size: 14px;
+}
+
+h2 {
+  color: white;
+  font-size: 20px;
+  margin: 40px 0 20px 0;
+}
+
+.styled-select {
+  background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
+  height: 29px;
+  overflow: hidden;
+  width: 120px;
+}
+
+.styled-select select {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  height: 29px;
+  padding: 5px;
+  width: 140px;
+}
+
+.semi-square {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.blue {
+  background-color: #3b8ec2;
+}
+
+.blue select {
+  color: #fff;
 }

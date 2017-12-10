@@ -6,50 +6,9 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="js/moment.min.js"></script>
-  <!-- <script type="text/javascript" src="js/js.js"></script> -->
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <link rel="stylesheet" href="style/style.css">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
-  <style media="screen">
-    body{
-      font-family: 'Open Sans', sans-serif;
-    }
-    p {
-      color: white;
-      font-size: 14px;
-    }
-    h2{
-      color:white;
-      font-size: 20px;
-      margin: 40px 0 20px 0;
-    }
-    input.region-input {
-      margin-right: 10px;
-    }
-    .styled-select {
-   background: url(http://i62.tinypic.com/15xvbd5.png) no-repeat 96% 0;
-   height: 29px;
-   overflow: hidden;
-   width: 240px;
-}
-
-.styled-select select {
-   background: transparent;
-   border: none;
-   font-size: 14px;
-   height: 29px;
-   padding: 5px; /* If you add too much padding here, the options won't show in IE */
-   width: 268px;
-}
-    .semi-square {
-      -webkit-border-radius: 5px;
-      -moz-border-radius: 5px;
-      border-radius: 5px;
-    }
-    .blue    { background-color: #3b8ec2; }
-    .blue select    { color: #fff; }
-  </style>
 </head>
 
 <body>
@@ -77,15 +36,14 @@
         <div class="">
           <h2>Select Regions</h2>
           <p style="color:rgb(128,216,255);"><input class="region-input" type="checkbox" id="north" name="1" checked/>North China</p>
-          <p style="color:rgb(140,158,255);"><input class="region-input" type="checkbox" id="northeast" name="2"/>Northeast China</p>
-          <p style="color:rgb(255,138,128);"><input class="region-input" type="checkbox" id="east" name="3"/>East China</p>
-          <p style="color:rgb(234,128,252);"><input class="region-input" type="checkbox" id="southcentral" name="4"/>South Central China</p>
+          <p style="color:rgb(140,158,255);"><input class="region-input" type="checkbox" id="northeast" name="2" />Northeast China</p>
+          <p style="color:rgb(255,138,128);"><input class="region-input" type="checkbox" id="east" name="3" />East China</p>
+          <p style="color:rgb(234,128,252);"><input class="region-input" type="checkbox" id="southcentral" name="4" />South Central China</p>
           <p style="color:rgb(255,209,128);"><input class="region-input" type="checkbox" id="southwest" name="5" checked/>Southwest China</p>
-          <p style="color:rgb(102,187,106);"><input class="region-input" type="checkbox" id="northwest" name="6"/>Northwest China</p>
+          <p style="color:rgb(102,187,106);"><input class="region-input" type="checkbox" id="northwest" name="6" />Northwest China</p>
         </div>
       </div>
     </div>
-
 
     <script>
       // set the dimensions and margins of the graph
@@ -97,7 +55,7 @@
           left: 50
         },
         parent = d3.select('#line-chart'),
-        width = parseInt(parent.style("width"),10) - margin.left - margin.right,
+        width = parseInt(parent.style("width"), 10) - margin.left - margin.right, // get the width dynamically using window width
         height = 470 - margin.top - margin.bottom;
 
       // parse the date / time
@@ -105,9 +63,11 @@
 
       // get all the checked regions
       var regions = $('.region-input');
+
       // set the ranges
       x = d3.scaleTime().range([0, width]);
       y = d3.scaleLinear().range([height, 0]);
+
       // define the line
       var valueline = d3.line()
         .curve(d3.curveCatmullRomOpen)
@@ -132,15 +92,8 @@
         c4 = "rgb(234,128,252)",
         c5 = "rgb(255,209,128)",
         c6 = "rgb(102,187,106)";
-      // var c_north = c1, c_south = "#FE7F2D";
-      // var color = {
-      //   "11": c_north,"12": c_north,"13": c_north,"14": c_north,"15": c_north,
-      //   "21": c_north,"22": c_north,"23": c_north,
-      //   "31": c_south,"32": c_south,"33": c_south,"34": c_south,"35": c_south,"36": c_south,"37": c_north,
-      //   "41": c_north,"42": c_south,"43": c_south,"44": c_south,"45": c_south,"46": c_south,
-      //   "50": c_south,"51": c_south,"52": c_south,"53": c_south,"54": c_south,
-      //   "61": c_north,"62": c_north,"63": c_north,"64": c_north,"65": c_north
-      // };
+
+      // color encoding for different regions
       var color = {
         "11": c1,
         "12": c1,
@@ -175,23 +128,33 @@
         "65": c6
       };
 
+      // load city division pinyin encoding
+      d3.json("data/all_city_pinyin.json", function(error, data) {
+        if (error) throw error;
+        // remove all existing charts so there is no overlap
+        pinyin_data = data;
+      });
+
+      // function to capitalize a word
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+      }
+
       // draw function
       function draw_line_chart(data) {
-        console.log(parseInt(parent.style("width"),10))
-        svg.attr('width',parseInt(parent.style("width"),10) - margin.left - margin.right);
+        // change width dynamically
+        svg.attr('width', parseInt(parent.style("width"), 10) - margin.left - margin.right);
         var data = data;
-        // parse the data
+        // parse the data to create a new array for drawing
         var all_data = [];
         for (var key of Object.keys(data)) {
           for (var item of data[key]) {
-            // console.log(item);
             all_data.push(item);
           }
         }
-        // adding data smoothing
-        all_data.push([year+"-02", 30]);
-        all_data.push([year+"-02", 350]);
-
+        // adding data smoothing so the line chart looks better
+        all_data.push([year + "-02", 20]);
+        all_data.push([year + "-02", 350]);
         // Scale the range of the data for all the lines
         x.domain(d3.extent(all_data, function(d) {
           return parseTime(d[0]);
@@ -222,101 +185,83 @@
             .attr("d", d3.line()
               .curve(d3.curveCatmullRom)
               .x(function(d) {
-                // console.log(x(parseTime(d[0])))
                 return x(parseTime(d[0]));
               })
               .y(function(d) {
-                // console.log(y(d[1]))
                 return y(d[1]);
               })
-            );
-            // end of draw_one function
+            )
+            // hover over effect
+            .on("mouseover", function() {
+              d3.select(this)
+                .style("opacity", 1)
+                .style("stroke-width", "3px")
+              svg.append("text")
+                .attr("id", "hover-test")
+                .attr("x", width)
+                .attr("y", 80)
+                .attr("fill", color[division.substring(0, 2)])
+                .attr("text-anchor","end")
+                .text("City: " + capitalizeFirstLetter(pinyin_data[division]));
+            })
+            // hover out effect
+            .on("mouseout", function(d, i) {
+              d3.select(this)
+                .style("opacity", 0.4)
+                .style("stroke-width", "1px");
+              d3.select("#hover-test").remove();
+            });
+          // end of draw_one function
         }
-        // get selected regions
+        // get selected regions (checkbox)
         var selected_regions = []
-        for (var region of regions){
-          if (region.checked){
+        for (var region of regions) {
+          if (region.checked) {
             selected_regions.push(region.name)
           }
         }
-        // draw the lines here
+        // draw the lines here, only draw the cities that are checked
         for (var key of Object.keys(data)) {
-          if (data[key].length == 12 && selected_regions.indexOf(key.substring(0,1)) != -1) {
+          if (data[key].length == 12 && selected_regions.indexOf(key.substring(0, 1)) != -1) {
             draw_one(data, key);
           }
         }
         // end of draw_line_chart function
       }
-      // Get the data
-      function load_and_draw(){
+
+      // function to load data and draw data
+      function load_and_draw() {
         year = d3.select("#year").node().value;
-        d3.json("all_city_aqi_" + year + ".json", function(error, data) {
+        d3.json("data/all_city_aqi_" + year + ".json", function(error, data) {
           if (error) throw error;
-          // format the data
+          // remove all existing charts so there is no overlap
           svg.selectAll("*").remove();
           draw_line_chart(data)
         });
       }
+
+      // draw data when initializing the window
       load_and_draw(year);
-      // dropdown worked
-      d3.select("#year").on('change',function(){
+
+      // dropdown box interactions
+      d3.select("#year").on('change', function() {
         load_and_draw(year);
       });
-      // checkbox worked
-      regions.each(function(d){
-          d3.select(this)
-          .on('change',function(){
-          load_and_draw(year);
-        });
+
+      // checkbox interactions
+      regions.each(function(d) {
+        d3.select(this)
+          .on('change', function() {
+            load_and_draw(year);
+          });
       });
-      // resize window worked
-      d3.select(window).on('resize', function(){
+
+      // resize window interactions - did not work for some unknow reason
+      d3.select(window).on('resize', function() {
         console.log('resized');
         // console.log(svg.style('width'));
         load_and_draw(year);
       });
-
-
-
-      // svg.append("text")
-      //   .attr("x", width + 5) // space legend
-      //   .attr("y", margin.top + 20 + (1 * 20))
-      //   .attr("class", "legend") // style the legend
-      //   .style("fill", function() { // Add the colours dynamically
-      //     return color("curveCatmullRom");
-      //   })
-      //   .text("curveCatmullRom");
-      // .on("click", function(){
-      // // Determine if current line is visible
-      // var active   = daCurve.active ? false : true,
-      // newOpacity = active ? 0 : 1;
-      // // Hide or show the elements based on the ID
-      // d3.select("#tag"+i)
-      //     .transition().duration(100)
-      //     .style("opacity", newOpacity);
-      // // Update whether or not the elements are active
-      // daCurve.active = active;
-      // })
     </script>
-    <!-- code for the slider -->
-    <!-- <div class="container">
-      <div class="row" style="margin:-70px 0 0 50px;">
-        <p class="col-md-5 caption" style="margin-bottom:20px;">
-          Slider to control the start date and end date
-        </p>
-        <div class="col-md-10">
-          <div id="slider-range"></div>
-        </div>
-      </div>
-      <div class="row slider-labels" style="margin:20px 0 0 50px;">
-        <div class="col-md-5 caption">
-          <strong>Start Date:</strong> <span id="slider-range-value1"></span>
-        </div>
-        <div class="col-md-5 text-right caption">
-          <strong>End Date:</strong> <span id="slider-range-value2"></span>
-        </div>
-      </div>
-    </div> -->
   </div>
-
 </body>
