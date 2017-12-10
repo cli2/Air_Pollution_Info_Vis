@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Plotly.js -->
+  <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+  <!-- <script type="text/javascript" src="data.json"></script> -->
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+  crossorigin="anonymous"></script>
+  <!-- Latest compiled and minified CSS -->
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+
+<!-- Optional theme -->
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
+
+<!-- Latest compiled and minified JavaScript -->
+<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
+<!-- <link rel="stylesheet" href="tooltip.css"> -->
+  <link rel="stylesheet" href="bubble.css">
+</head>
+<body>
+	<div class="col-xs-12">
+		<h1>Bubble Chart</h1>
+		
+		<div class="col-xs-8 col-xs-offset-2">
+			<div class="row" style="margin-bottom: 30px;">
+			<div class="custom-dropdown">
+				x-axis: <select class="" id="p1-input">
+						<option value="aqi">AQI</option>
+						<!-- <option value="co">CO</option>
+						<option value="no2">NO2</option>
+						<option value="o3">O3</option>
+						<option value="pm10">PM10</option>
+						<option value="pm2_5" selected="selected">PM2.5</option>
+						<option value="so2">SO2</option> -->
+						<option value="GDP" selected="selected">GDP</option>
+						<option value= "GDP_per_capita">GDP per capita</option>
+						<option value= "secondary_industry_percentage">Secondary Industry as Percentage to GDP</option>
+						<option value= "persons_employed_in_mining">Persons employed in Mining</option>
+						<option value= "persons_employed_in_manufacturing">Persons employed in Manufactoring</option>
+						<option value="population">Population</option>
+						<option value="Population_Density">Population Density</option>
+						<option value="Green_Covered_Area_percentage">Green Covered Area Percentage</option>
+						<option value="dust_emission">Dust Emission</option>
+						<option value="dust_removed">Dust Removed</option>
+						<!-- <option value= "persons_employed_in_p_egw">Persons Employed in Production of Electricity, Gas and Water</option>
+						<option value= "persons_employed_in_construction">Persons Employed in Construction</option> -->
+						
+				</select>
+			</div>
+			<div class=" custom-dropdown">
+				y-axis: <select class="" id="p2-input">
+				<option value="aqi" selected="selected">Air Quality Index</option>
+						<!-- <option value="co">CO</option>
+						<option value="no2">NO2</option>
+						<option value="o3">O3</option>
+						<option value="pm10" >PM10</option>
+						<option value="pm2_5">PM2.5</option>
+						<option value="so2">SO2</option> -->
+						<option value="GDP">GDP</option>
+						<option value= "GDP_per_capita">GDP per capita</option>
+						<option value= "secondary_industry_percentage">Secondary Industry as Percentage to GDP</option>
+						<option value= "persons_employed_in_mining">Persons employed in Mining</option>
+						<option value= "persons_employed_in_manufacturing">Persons employed in Manufactoring</option>
+						<option value="population">Population</option>
+						<option value="Population_Density">Population Density</option>
+						<option value="Green_Covered_Area_percentage">Green Covered Area Percentage</option>
+						<option value="dust_emission">Dust Emission</option>
+						<option value="dust_removed">Dust Removed</option>
+				</select>
+			</div>
+			<!-- <div class="row">
+				Bubble Size: <select class="" id="p3-input">
+				<option value="0">None</option>
+						
+						<option value="GDP">GDP</option>
+						<option value= "GDP_per_capita">GDP per capita</option>
+						<option value= "secondary_industry_percentage">Secondary Industry as Percentage to GDP</option>
+						<option value="population">Population</option>
+						<option value="Population_Density">Population Density</option>
+						<option value="Green_Covered_Area_percentage">Green Covered Area Percentage</option>
+						<option value="dust_emission">Dust Emission</option>
+						<option value="dust_removed">Dust Removed</option>
+				</select>
+				</div> -->
+			</div>
+			
+
+
+			<div id="chart">
+				
+			</div>
+		</div>
+</div>
+<!-- <script src="tooltip.js"></script> -->
+<script type="text/javascript" src="leastsquare.js"></script>
+<script type="text/javascript" src="new_data.js"></script>
+<script type="text/javascript" src="bubble.js"></script>
+</body>
+</html>
