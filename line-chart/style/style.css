@@ -17,14 +17,19 @@ body {
 
 .axis line {
   stroke: rgba(255, 255, 255, 0.5);
+  fill:none;
+  stroke-width: 1px;
 }
 
 .axis path {
   stroke: rgba(255, 255, 255, 0.5);
+  fill:none;
+  stroke-width: 1px;
 }
 
 .axis text {
   fill: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
 }
 
 div.main-container {

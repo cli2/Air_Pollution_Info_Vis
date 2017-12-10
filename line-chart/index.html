@@ -6,7 +6,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
   <link rel="stylesheet" href="style/style.css">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
 </head>
@@ -59,18 +59,18 @@
         height = 470 - margin.top - margin.bottom;
 
       // parse the date / time
-      var parseTime = d3.timeParse("%Y-%m");
+      var parseTime = d3.time.format("%Y-%m").parse;
 
       // get all the checked regions
       var regions = $('.region-input');
 
       // set the ranges
-      x = d3.scaleTime().range([0, width]);
-      y = d3.scaleLinear().range([height, 0]);
+      x = d3.time.scale().range([0, width]);
+      y = d3.scale.linear().range([height, 0]);
 
       // define the line
-      var valueline = d3.line()
-        .curve(d3.curveCatmullRomOpen)
+      var valueline = d3.svg.line()
+        .interpolate('cardinal')
         .x(function(d) {
           return x(d[0]);
         })
@@ -137,7 +137,12 @@
 
       // function to capitalize a word
       function capitalizeFirstLetter(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+        if (string.slice(-3,) == 'shi'){
+          return string.charAt(0).toUpperCase() + string.slice(1,-3);
+        } else{
+          return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
       }
 
       // draw function
@@ -166,11 +171,11 @@
         svg.append("g")
           .attr("class", "axis")
           .attr("transform", "translate(0," + height + ")")
-          .call(d3.axisBottom(x));
+          .call(d3.svg.axis().scale(x).orient("bottom"));
         // Add the Y Axis
         svg.append("g")
           .attr("class", "axis")
-          .call(d3.axisLeft(y));
+          .call(d3.svg.axis().scale(y).orient("left"));
         // function to draw one city
         function draw_one(data, division) {
           var sub_data = data[division]
@@ -182,8 +187,8 @@
               return color[division.substring(0, 2)];
             })
             .style("opacity", 0.4)
-            .attr("d", d3.line()
-              .curve(d3.curveCatmullRom)
+            .attr("d", d3.svg.line()
+              .interpolate('cardinal')
               .x(function(d) {
                 return x(parseTime(d[0]));
               })
